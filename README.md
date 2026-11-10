@@ -109,21 +109,3 @@ hashing.h      Hashing declarations
 ```
 
 Each word is hashed independently. A dictionary search succeeds only if a matching candidate appears in the file under the chosen algorithm and salt settings.
-
-## Current limitations
-
-- Automatic hash detection, brute force, mutations, and multithreading are not implemented.
-- `--word` currently discards the match result, so it does not display success or failure. It also does not apply salt settings.
-- Argument order can affect mode selection when `--salt` is used. The salted wordlist example above places `--salt` after `--wordlist`.
-- CLI validation needs improvement for missing required options, mutually exclusive modes, and `--saltpos` without `--salt`.
-- Hexadecimal input is not fully validated. Odd-length strings and invalid characters need explicit rejection.
-- Length validation has an incomplete SHA-512 alias check and is currently only applied in wordlist mode.
-- The target hex string is converted to bytes again for every candidate, adding avoidable work.
-- Wordlist entries are read as-is. Windows CRLF files can leave a trailing carriage return in each candidate.
-- Salting supports literal text concatenation. Password-hashing formats such as bcrypt, scrypt, and Argon2 are outside the current scope.
-
-## Background
-
-Inspired by the [hash-cracker project in CarterPerez-dev/Cybersecurity-Projects](https://github.com/CarterPerez-dev/Cybersecurity-Projects/tree/main/PROJECTS/beginner/hash-cracker).
-
-Use locally generated hashes and test wordlists while developing and benchmarking.
