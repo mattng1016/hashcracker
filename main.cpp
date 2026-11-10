@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
   if (option == 0) {
     crackWord(word, targetHash, hashType);
   } else if (option == 1) {
-    crackList(wordlist, targetHash, hashType);
+    Summary s = crackList(wordlist, targetHash, hashType);
+    displaySummary(s);
   }
   exit(0);
 }
