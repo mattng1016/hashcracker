@@ -1,6 +1,31 @@
+#include <cctype>
 #include <vector>
 #include <iostream>
 #include <openssl/evp.h>
+
+bool hashLengthValidity(std::string hash, std::string hashType) {
+  for (char& c : hashType) {
+    c = std::toupper(c);
+  }
+  if (hashType == "MD5") {
+    if (hash.length() != 32) {
+      return false;
+    }
+  } else if (hashType == "SHA-1" || hashType == "SHA1") {
+    if (hash.length() != 40) {
+      return false;
+    }
+  } else if (hashType == "SHA-256" || hashType == "SHA256") {
+    if (hash.length() != 64) {
+      return false;
+    }
+  } else if (hashType == "SHA512" || hashType == "SHA512") {
+    if (hash.length() != 128) {
+      return false;
+    }
+  }
+  return true;
+}
 
 std::vector<unsigned char> hashWord (std::string word, std::string hashType) {
   EVP_MD_CTX* mdctx;

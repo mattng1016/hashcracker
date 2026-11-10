@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 
 #include "cracker.h"
@@ -77,25 +78,36 @@ bool crackWord(std::string word, std::string hashValue, std::string hashType) {
 }
 
 Summary crackList(std::string fileName, std::string hashValue,
-                  std::string hashType) {
+                  std::string hashType, Salt& salt) {
   std::ifstream file;
   std::string word;
   Summary s;
 
   file.open(fileName);
   if (!file) {
-    std::cout << "Invalid file: " << fileName << "\n";
+    std::cerr << "Invalid file: " << fileName << "\n";
     exit(1);
   } else if (file.peek() == EOF) {
-    std::cout << "Empty file: " << fileName << "\n";
+    std::cerr << "Empty file: " << fileName << "\n";
     exit(1);
   }
 
+  if (!hashLengthValidity(hashValue, hashType)) {
+    std::cerr << "Invalid hash length\n";
+    exit(1);
+  }
+
+  // Start looping through the file
   const auto startTime = std::chrono::steady_clock::now();
   while (std::getline(file, word)) {
     s.attempts++;
+    if (salt.pos == SaltPosition::Append) {
+      word = word + salt.saltValue;
+    } else if (salt.pos == SaltPosition::Prepend) {
+      word = salt.saltValue + word;
+    }
     if (crackWord(word, hashValue, hashType)) {
-      std::cout << "\nHash cracked: " << word << "\n";
+      std::cout << "Hash cracked: " << word << "\n";
       const auto endTime = std::chrono::steady_clock::now();
       s.duration = endTime - startTime;
       return s;
