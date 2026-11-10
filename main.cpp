@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   std::string targetHash;
   std::string word;
   std::string hashType;
-  int option;
+  int option = 0;
 
   for (int i = 1; i < argc; i++) {
     std::string flag = argv[i];
@@ -47,8 +47,7 @@ int main(int argc, char *argv[]) {
   if (option == 0) {
     crackWord(word, targetHash, hashType);
   } else if (option == 1) {
-    crackList();
+    crackList(wordlist, targetHash, hashType);
   }
-
   exit(0);
 }

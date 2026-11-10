@@ -1,5 +1,15 @@
+#include <fstream>
 #include <iostream>
 #include "hashing.h"
+
+FILE* validateFile(std::string fileName) {
+  FILE* f = fopen(fileName.c_str(), "r");
+  if (!f) {
+    std::cout << "Error opening" << fileName << "\n";
+    exit(1);
+  }
+  return f;
+}
 
 int asciitovalue(const char c) {
   if (c >= '0' && c <= '9') return c - '0'; 
@@ -19,17 +29,34 @@ std::vector<unsigned char> hexToByte(std::string hashValue) {
   return value;
 }
 
-void crackWord(std::string word, std::string hashValue, std::string hashType) {
+bool crackWord(std::string word, std::string hashValue, std::string hashType) {
   std::vector<unsigned char> digest = hashWord(word, hashType);
   std::vector<unsigned char> hV = hexToByte(hashValue);
 
   if (digest == hV) {
-    std::cout << "Hash matches" << '\n';
+    return true;
   } else {
-    std::cout << "No match" << '\n';
+    return false;
   }
 }
 
-void crackList() {
+void crackList(std::string fileName, std::string hashValue, std::string hashType) {
+  std::ifstream file;
+  std::string word;
+  file.open(fileName);
+  if (!file) {
+    std::cout << "Invalid filename: " << fileName << "\n";
+    exit(1);
+  }
 
+  while (std::getline(file, word)) {
+    if (crackWord(word, hashValue, hashType)) {
+      std::cout << "Hash cracked: " << word << "\n";
+      return;
+    }
+  } 
+  std::cout << "Hash not cracked";
 }
+
+
+
