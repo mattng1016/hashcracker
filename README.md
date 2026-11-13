@@ -7,11 +7,10 @@ This is a learning project covering OpenSSL's EVP API, command-line arguments, h
 ## Features
 
 - Dictionary search with one candidate per line.
-- Explicit algorithm selection through OpenSSL, with length checks for MD5, SHA-1, SHA-256, and SHA-512 in dictionary mode.
+- MD5, SHA-1, SHA-256, and SHA-512 through OpenSSL, with optional digest-length inference.
 - Raw-byte digest comparison.
 - Optional text salt, prepended or appended to each candidate.
 - Search summary showing attempts, elapsed time, and average guesses per second.
-- Single-candidate comparison through `--word` (currently returns a result internally without printing it).
 
 ## Build
 
@@ -40,7 +39,6 @@ printf 'apple\ndragon\npassword\n' > words.txt
 
 ./hashcracker \
   --wordlist words.txt \
-  --hashtype SHA256 \
   --hashvalue 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
 ```
 
@@ -90,13 +88,22 @@ The current match message displays the combined salted input, such as `demopassw
 | Flag | Value | Purpose |
 | --- | --- | --- |
 | `--wordlist` | File path | Read candidate words from a file |
-| `--word` | Candidate text | Compare one candidate; currently produces no CLI result message |
 | `--hashvalue` | Hexadecimal digest | Target hash to compare against |
-| `--hashtype` | Algorithm name | Select an OpenSSL digest, such as `SHA256` |
+| `--hashtype` | Algorithm name | Optional. Select a digest such as `SHA256` |
 | `--salt` | Text | Salt used when searching a wordlist |
 | `--saltpos` | `prepend` or `append` | Salt position; defaults to prepend |
 
-For dictionary searches, supply `--wordlist`, `--hashvalue`, and `--hashtype`. Use `--word` in place of `--wordlist` for a single candidate. Current validation does not enforce all required arguments or conflicting options.
+Supply both `--wordlist` and `--hashvalue`. If you omit `--hashtype`, the program guesses from the hexadecimal digest length. It maps 32, 40, 64, and 128 characters to MD5, SHA-1, SHA-256, and SHA-512, respectively. Different algorithms can share a digest length, so specify the type explicitly when you know it.
+
+## Tests
+
+Build the executable first, then run the CLI tests from the project root with Python 3:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+The suite covers CLI validation, successful and unsuccessful searches, SHA-256 inference, and both salt positions. Search tests create a temporary wordlist with known contents.
 
 ## Project structure
 
