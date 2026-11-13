@@ -7,24 +7,26 @@
   -L"$(brew --prefix openssl@3)/lib" \
   -lcrypto -o hashcracker */
 
-#include "hashing.h"
 #include "cracker.h"
+#include "hashing.h"
 
-enum mode {word, wordlist, salt};
+enum mode { wordlist, salt };
 
 int main(int argc, char *argv[]) {
   std::string wordlist, targetHash, word, saltValue, hashType;
-  enum mode option; 
+  enum mode option;
   Salt salt;
 
   if (argc < 2) {
-    std::cout << "Usage: ./hashcracker [--wordlist] [--hashvalue] [--word] [--hashtype] [--salt] [--saltpos]\n";
+    std::cout << "Usage: ./hashcracker [--wordlist] [--hashvalue] "
+                 "[--hashtype] [--salt] [--saltpos]\n";
     exit(1);
   }
 
   for (int i = 1; i < argc; i++) {
     std::string flag = argv[i];
-    if (flag != "--wordlist" && flag != "--hashvalue" && flag != "--word" && flag != "--hashtype" && flag != "--salt" && flag != "--saltpos") {
+    if (flag != "--wordlist" && flag != "--hashvalue" && flag != "--hashtype" &&
+        flag != "--salt" && flag != "--saltpos") {
       std::cerr << "Unknown option: " << flag << '\n';
       return 1;
     }
@@ -42,16 +44,13 @@ int main(int argc, char *argv[]) {
       option = mode::wordlist;
     } else if (flag == "--hashvalue") {
       targetHash = value;
-    } else if (flag == "--word") {
-      word = value;
-      option = mode::word;
     } else if (flag == "--hashtype") {
       hashType = value;
     } else if (flag == "--salt") {
       salt.saltValue = value;
       option = mode::salt;
     } else if (flag == "--saltpos") {
-      for (auto& c : value) {
+      for (auto &c : value) {
         c = tolower(c);
       }
       if (value == "append") {
@@ -65,9 +64,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (option == mode::word) {
-    crackWord(word, targetHash, hashType);
-  } else if (option == mode::wordlist) {
+  if (option == mode::wordlist) {
     Summary s = crackList(wordlist, targetHash, hashType, salt);
     displaySummary(s);
   } else if (option == mode::salt) {

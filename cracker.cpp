@@ -93,7 +93,10 @@ Summary crackList(std::string fileName, std::string hashValue,
   }
 
   if (!hashLengthValidity(hashValue, hashType)) {
-    std::cerr << "Invalid hash length\n";
+    std::cerr << "Invalid hash length for " << hashType << "\n";
+    exit(1);
+  } else if (!hashCharValidity(hashValue)) {
+    std::cerr << "Invalid hash character\n";
     exit(1);
   }
 

@@ -3,6 +3,22 @@
 #include <iostream>
 #include <openssl/evp.h>
 
+bool checkHex(const char& c) {
+  if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+    return true;
+  }
+  return false;
+}
+
+bool hashCharValidity(std::string hash) {
+  for (char& c : hash) {
+    if (!checkHex(c)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool hashLengthValidity(std::string hash, std::string hashType) {
   for (char& c : hashType) {
     c = std::toupper(c);
