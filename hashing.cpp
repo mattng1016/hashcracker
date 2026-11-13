@@ -1,7 +1,24 @@
 #include <cctype>
+#include <cstddef>
 #include <vector>
 #include <iostream>
 #include <openssl/evp.h>
+
+std::string guessHash(std::string hash) {
+  int length = hash.length();
+  switch (length) {
+    case 32:
+      return "MD5";
+    case 40:
+      return "SHA-1";
+    case 64:
+      return "SHA-256";
+    case 128:
+      return "SHA-512";
+    default:
+      return "NULL";
+  }
+}
 
 bool checkHex(const char& c) {
   if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {

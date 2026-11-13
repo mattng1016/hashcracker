@@ -64,6 +64,26 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if (wordlist.empty()) {
+    std::cerr << "--wordlist requires a file path\n";
+    exit(1);
+  }
+
+  if (targetHash.empty()) {
+    std::cerr << "--hashvalue requires a target digest\n";
+    exit(1);
+  }
+
+  if (hashType.empty()) {
+    std::string guess = guessHash(targetHash);
+    std::cout << "Guess hash: " << guess << "\n";
+    if (guess == "NULL") {
+      std::cerr << "Can't infer hash type from target digest\n";
+      exit(1);
+    }
+    hashType = guess;
+  }
+
   if (option == mode::wordlist) {
     Summary s = crackList(wordlist, targetHash, hashType, salt);
     displaySummary(s);
